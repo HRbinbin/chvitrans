@@ -1,0 +1,82 @@
+model_dir: E:/model41/ # NMTBig
+#model_dir: E:/model5/ # NMTMedium
+#model_dir: E:/model6/ # NMTSmall
+
+data:
+  train_features_file: src-train-ch-full.txt
+  train_labels_file: tgt-train-vi-full.txt
+  source_words_vocabulary: E:/chvitrans/chvi/nmt/src-vocab-ch.txt
+  target_words_vocabulary: E:/chvitrans/chvi/nmt/tgt-vocab-vi.txt
+  # (required for train_end_eval and eval run types).
+  eval_features_file: src-val-ch21.txt
+  eval_labels_file: tgt-val-vi21.txt
+
+
+# Model and optimization parameters.
+params:
+  optimizer: AdamOptimizer
+  learning_rate: 0.0001
+
+  beam_width: 12
+  clip_gradients: 0.6
+
+  loss_scale: backoff
+  # (optional) For mixed precision training, the additional parameters to pass the loss scale
+  # (see the source file opennmt/optimizers/mixed_precision_wrapper.py).
+  loss_scale_params:
+    scale_min: 0.00001
+    step_factor: 2.0
+
+  # (optional) Weights regularization penalty (default: null).
+#  regularization:
+#    type: l2  # can be "l1", "l2", "l1_l2" (case-insensitive).
+#    scale: 1e-8  # if using "l1_l2" regularization, this should be a YAML list
+
+  # (optional) Average loss in the time dimension in addition to the batch dimension (default: False).
+  average_loss_in_time: true
+
+  decay_type: exponential_decay
+  # (optional unless decay_type is set) Decay parameters.
+  decay_params:
+#    model_dim: 512
+    # The learning rate decay rate.
+    decay_rate: 0.85
+    # Decay every this many steps.
+    decay_steps: 30000
+    # (optional) If true, the learning rate is decayed in a staircase fashion (default: true).
+    staircase: false
+  # (optional) The number of training steps that make 1 decay step (default: 1).
+  decay_step_duration: 1
+  # (optional) After how many steps to start the decay (default: 0).
+  start_decay_steps: 0
+
+  # (optional) The learning rate minimum value (default: 0).
+  minimum_learning_rate: 0
+  # (optional) The learning rate maximum value (default: 1e6).
+  maximum_learning_rate: 1e6
+
+
+
+train:
+  batch_size: 2048
+  batch_type: tokens
+  effectively_batch_size: 10000000
+#  bucket_width: 15
+  sample_buffer_size: 6000000
+  save_checkpoints_secs: 1200
+  save_summary_steps: 500
+#  maximum_features_length: 200
+#  maximum_labels_length: 300
+
+# (optional) Evaluation options.
+eval:
+  # (optional) The batch size to use (default: 32).
+  batch_size: 8
+  # (optional) Evalutator or list of evaluators that are called on the saved evaluation predictions.
+  # Available evaluators: sacreBLEU, BLEU, BLEU-detok, ROUGE
+  external_evaluators: BLEU
+  save_eval_predictions: true
+  eval_delay: 300
+
+infer:
+  n_best: 10

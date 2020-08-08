@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">{% load staticfiles %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #ch {
+            font-size: 18px;
+        }
+        #vi{
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body >
+    <h1>毕业设计-汉语-越南语"机器翻译"的简单demo演示</h1>
+    <textarea cols="60" rows="20" id="ch"></textarea>
+    <textarea cols="60" rows="20" id="vi"></textarea>
+    <input type="submit" onclick="subtran();"/>
+</body>
+<script type="text/javascript" src="{% static 'js/tran.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+<script>
+    $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+</script>
+</html>
